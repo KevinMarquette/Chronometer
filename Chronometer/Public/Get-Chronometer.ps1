@@ -21,47 +21,17 @@ function Get-Chronometer
         $ScriptBlock
     )
 
-    $breakPoint = @()
-    $fileMap = @{}
-
-    foreach($file in (Resolve-Path $Path -ea 0))
-    {
-        $fileMap[$file.Path] = @( Get-Content -Path $file | %{[ScriptLine]@{text=$_;path=$file.path}})
-
-        $lines = $fileMap[$file.Path].count
-        $breakPoint += Set-PSBreakpoint -Script $file -Line (1..$lines) -Action {[ScriptProfiler]::RecordExecution( $_) }
-    }
+    $Chronometer = [Chronometer]::New()
+    $breakPoint = $Chronometer.AddBreakpoint($Path)
 
     [ScriptProfiler]::Start()
     [void] $ScriptBlock.Invoke()
 
-    Remove-PSBreakpoint $breakpoint
-
-    #$fileMap | ConvertTo-Json
-  
+    $Chronometer.ClearBreakpoint()
 
     foreach($node in [ScriptProfiler]::Queue.GetEnumerator())
     {
-        $record = $fileMap[$node.Breakpoint.Script][$node.Breakpoint.Line-1]
-        $record.LineNumber = $node.Breakpoint.Line - 1
-
-        if($lastNode)
-        {
-            $duration = $node.ElapsedMilliseconds - $lastNode.ElapsedMilliseconds
-        }
-        else
-        {
-            $duration = $node.ElapsedMilliseconds
-        }
-        
-        
-        if($lastRecord)
-        {
-            $lastRecord.AddExecutionTime($duration)       
-        }
-
-        $lastRecord = $record
-        $lastNode = $node
+        $Chronometer.AddExecution($node)
     }
 
     foreach($script in $fileMap.Keys)
