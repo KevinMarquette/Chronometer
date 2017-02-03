@@ -28,8 +28,6 @@ Task Init {
     "Build System Details:"
     Get-Item ENV:BH* | Format-List
     "`n"
-    "Check for node conflict"
-    Get-Command node | Select-Object *
 }
 
 Task UnitTests -Depends Init {
