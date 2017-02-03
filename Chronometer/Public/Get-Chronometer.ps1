@@ -1,10 +1,21 @@
 function Get-Chronometer
 {
+    <#
+        .Description
+        Loads a script and then tracks the line by line execution times
+
+        .Example
+        Get-Chronometer -Path .\example.ps1 -Script {
+            .\example.ps1
+        }
+    #>
     [CmdletBinding()]
     param(
+        # Script file to measure execution times on
         [string[]]
         $Path,
 
+        # The script to start the scrupt or execute other commands
         [scriptblock]
         $CommandScript
     )
