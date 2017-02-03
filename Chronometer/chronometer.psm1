@@ -1,7 +1,7 @@
 Write-Verbose "Importing Functions"
 
 # Import everything in sub folders folder
-foreach($folder in @('private', 'public', 'classes'))
+foreach($folder in @('classes', 'private', 'public','includes'))
 {
     $root = Join-Path -Path $PSScriptRoot -ChildPath $folder
     if(Test-Path -Path $root)
