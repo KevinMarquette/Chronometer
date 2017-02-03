@@ -16,14 +16,15 @@ function Get-Chronometer
         $Path,
 
         # The script to start the scrupt or execute other commands
+        [alias('Script','CommandScript')]
         [scriptblock]
-        $CommandScript
+        $ScriptBlock
     )
 
     $breakPoint = @()
     $fileMap = @{}
 
-    foreach($file in (Resolve-Path $Path))
+    foreach($file in (Resolve-Path $Path -ea 0))
     {
         $fileMap[$file.Path] = @( Get-Content -Path $file | %{[ScriptLine]@{text=$_;path=$file.path}})
 
@@ -32,7 +33,7 @@ function Get-Chronometer
     }
 
     [ScriptProfiler]::Start()
-    [void] $CommandScript.Invoke()
+    [void] $ScriptBlock.Invoke()
 
     Remove-PSBreakpoint $breakpoint
 
