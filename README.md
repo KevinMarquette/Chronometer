@@ -17,11 +17,8 @@ Provide a script file and a command to execute.
     $path = myscript.ps1
     Get-Chronometer -Path $path -Script {. .\myscript.ps1} -OutVariable report
     $report.ToString()
+The user experience is important to me but I am working on the core logic right now. I will loop back to make it more intuitive and simple to use. 
 
 ## Things to know
 The `Path` can be any ps1 and the script can run any command. Ideally, you would either execute the script or load the script and execute a command inside it. 
-
-## General comments
-The user experience is important to me but I am working on the core logic right now. I will loop back to make it more intuitive and simple to use. 
-
 
