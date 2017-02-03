@@ -7,7 +7,7 @@ foreach($folder in @('classes', 'private', 'public','includes'))
     if(Test-Path -Path $root)
     {
         Write-Verbose "processing folder $root"
-        $files = Get-ChildItem -Path $root -Filter *.ps1
+        $files = Get-ChildItem -Path $root -Filter *.ps1 -Recurse
 
         # dot source each file
         $files | where-Object{ $_.name -NotLike '*.Tests.ps1'} | 
