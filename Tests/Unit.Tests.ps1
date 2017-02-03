@@ -18,6 +18,12 @@ Describe "Basic unit tests" -Tags Build {
             it "Creates an Object" {
                 {[ScriptLine]::New()} | Should Not Throw
             }
+            it "ToString()" {
+                {[ScriptLine]::New().toString()} | Should Not Throw
+            }
+            it "Creates an Object" {
+                {[ScriptLine]::New().AddExecutionTime(1)} | Should Not Throw
+            }
         }
 
         Context "Class: ScriptProfiler" {
@@ -25,7 +31,9 @@ Describe "Basic unit tests" -Tags Build {
             it "Creates an Object" {
                 {[ScriptProfiler]::New()} | Should Not Throw
             }
+            it "Start()" {
+                {[ScriptProfiler]::Start()} | Should Not Throw
+            }
         }
     }
-    
 }
