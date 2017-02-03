@@ -1,3 +1,5 @@
+#Requires -Version 5.0
+
 Write-Verbose "Importing Functions"
 
 # Import everything in sub folders folder
