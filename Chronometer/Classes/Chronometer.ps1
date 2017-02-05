@@ -3,18 +3,26 @@ class Chronometer
     [hashtable]$FileMap = @{}
     $Breakpoint = @()
 
-    [void]AddBreakpoint([string[]]$Path)
+    [void]AddBreakpoint([string[]]$Path, [int[]]$LineNumber)
     {
         foreach($file in (Resolve-Path $Path -ea 0))
         {
             $script = [MonitoredScript]@{Path=$file.Path}
             $lines = $script.SetScript($file)
+            if($LineNumber -ne $null)
+            {
+                $bpLine = $LineNumber
+            }
+            else 
+            {
+                $bpLine = (1..$lines)
+            }
 
             $this.fileMap[$file.Path] = $script
 
             $breakpointParam = @{
                 Script = $file
-                Line = (1..$lines)
+                Line = $bpLine
                 Action = {[ScriptProfiler]::RecordExecution( $_) }
             }
             $this.breakPoint += Set-PSBreakpoint @breakpointParam
@@ -42,6 +50,10 @@ class Chronometer
 
     [MonitoredScript[]] GetResults()
     {
+        foreach($node in $this.FileMap.Values)
+        {
+            $node.PostProcessing()
+        }
         return $this.FileMap.Values
     }
 }
