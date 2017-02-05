@@ -17,6 +17,29 @@ Describe "Basic unit tests" -Tags Build {
             $results = Get-Chronometer -Path $PSScriptRoot\..\ScratchFiles\example.ps1 -Script {. "$PSScriptRoot\..\ScratchFiles\example.ps1"} 
             $results | Should Not BeNullOrEmpty
         }
+
+         it "Executes a script with linenumbers and gives results" {
+            # Get-Chronometer -Path ScratchFiles\example.ps1 -Script {"Test"} 
+            $params = @{
+                Path = "$PSScriptRoot\..\ScratchFiles\example.ps1"
+                Script = {. "$PSScriptRoot\..\ScratchFiles\example.ps1"}
+                LineNumber = 2,3,5,6
+            }
+            $results = Get-Chronometer @params
+            $results | Should Not BeNullOrEmpty
+        }
+    }
+
+    Context "Function: Format-Chronometer" {
+
+        it "Does not throw" {
+            {$null | Format-Chronometer } | Should Not Throw
+        }
+
+        it "Can process a result object without throwing" {
+            $results = Get-Chronometer -Path $PSScriptRoot\..\ScratchFiles\example.ps1 -Script {. "$PSScriptRoot\..\ScratchFiles\example.ps1"} 
+            $results | Format-Chronometer *>&1 | Should Not BeNullOrEmpty
+        }
     }
 
     InModuleScope $moduleName {
@@ -44,11 +67,17 @@ Describe "Basic unit tests" -Tags Build {
         }
 
         Context "Class: MonitoredScript" {
-            {[MonitoredScript]::New()} | Should Not Throw
+            it "Creates an object" {
+                {[MonitoredScript]::New()} | Should Not Throw
+            }
+            
+            it  "SetScript()" {
+                pushd $projectRoot
+                $monitor = [MonitoredScript]::New()
+                {$monitor.SetScript(".\scratchfiles\example.ps1")} | Should Not Throw
+                popd
+            }
         }
 
-        Context "Class: MonitoredScript" {
-            {[MonitoredScript]::SetScript("$projectRoot\scratchfiles\example.ps1")} | Should Not Throw
-        }
     }
 }
