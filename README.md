@@ -33,4 +33,3 @@ Here is a more complex example:
     }
     $results = Get-Chronometer @Chronometer 
     $results | Format-Chronometer
-
