@@ -2,12 +2,13 @@ $projectRoot = Resolve-Path "$PSScriptRoot\.."
 $moduleRoot = Split-Path (Resolve-Path "$projectRoot\*\*.psd1")
 $moduleName = Split-Path $moduleRoot -Leaf
 
-Import-Module (Join-Path $moduleRoot "$moduleName.psm1") -force
-
 Describe "Basic unit tests" -Tags Build {
+    
+    Import-Module (Join-Path $moduleRoot "$moduleName.psm1") -force
 
     Context "Function: Get-Chronometer" {
         it "Does not throw" {
+            # Get-Chronometer -Path ScratchFiles\example.ps1 -Script {"Test"} 
             {Get-Chronometer -Path $PSScriptRoot\..\ScratchFiles\example.ps1 -Script {"Test"} } | Should Not Throw
         }
     }

@@ -23,12 +23,20 @@ class Chronometer
 
     [void]ClearBreakpoint()
     {
-        Remove-PSBreakpoint $this.Breakpointbreakpoint
+        if($this.Breakpoint -ne $null -and $this.Breakpoint.count -gt 0)
+        {
+            Remove-PSBreakpoint -Breakpoint $this.Breakpoint
+        }
+        
     }
 
     [void] AddExecution([hashtable]$Execution)
     {
-        $this.FileMap[$Execution.Breakpoint.Script].AddExecution($Execution)
+        $script = $Execution.Breakpoint.Script
+        if($this.FileMap.ContainsKey($script))
+        {
+            $this.FileMap[$script].AddExecution($Execution)
+        }
     }
 }
 
@@ -48,7 +56,7 @@ class MonitoredScript
     [int] SetScript([string]$Path)
     {
         Get-Content -Path $Path | %{ $this.Line.Add( [ScriptLine]@{text=$_})}
-        return $this.Line.Count()
+        return $this.Line.Count
     }
 
     [void] AddExecution([hashtable]$node)
