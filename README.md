@@ -15,8 +15,8 @@ Place the Chronometer folder into your `$PSModulePath`. I will publish to the Po
 Provide a script file and a command to execute.
 
     $path = myscript.ps1
-    Get-Chronometer -Path $path -Script {. .\myscript.ps1} -OutVariable report
-    $report.line | % tostring
+    $Chronometer = Get-Chronometer -Path $path -Script {. .\myscript.ps1}
+    $Chronometer | % tostring | Format-Chronometer
     
 The user experience is important to me but I am working on the core logic right now. I will loop back to make it more intuitive and simple to use. 
 
