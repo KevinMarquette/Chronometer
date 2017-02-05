@@ -61,8 +61,10 @@ Describe "Basic unit tests" -Tags Build {
             }
             
             it  "SetScript()" {
+                pushd $projectRoot
                 $monitor = [MonitoredScript]::New()
-                {$monitor.SetScript("$projectRoot\scratchfiles\example.ps1")} | Should Not Throw
+                {$monitor.SetScript(".\scratchfiles\example.ps1")} | Should Not Throw
+                popd
             }
         }
 
