@@ -21,54 +21,30 @@ function Get-Chronometer
         $ScriptBlock
     )
 
-    $breakPoint = @()
-    $fileMap = @{}
+    $Chronometer = [Chronometer]::New()
 
-    foreach($file in (Resolve-Path $Path -ea 0))
+    Write-Verbose "Setting breapoints"
+    $Chronometer.AddBreakpoint($Path)
+
+    if($Chronometer.breakPoint -ne $null)
     {
-        $fileMap[$file.Path] = @( Get-Content -Path $file | %{[ScriptLine]@{text=$_;path=$file.path}})
+        Write-Verbose "Executing Script"
+        [ScriptProfiler]::Start()
+        [void] $ScriptBlock.Invoke()
 
-        $lines = $fileMap[$file.Path].count
-        $breakPoint += Set-PSBreakpoint -Script $file -Line (1..$lines) -Action {[ScriptProfiler]::RecordExecution( $_) }
+        Write-Verbose "Clearing Breapoints"
+        $Chronometer.ClearBreakpoint()
+
+        Write-Verbose "Processing data"
+        foreach($node in [ScriptProfiler]::Queue.GetEnumerator())
+        {
+            $Chronometer.AddExecution($node)
+        }
+
+        Write-Output $Chronometer.GetResults()
     }
-
-    [ScriptProfiler]::Start()
-    [void] $ScriptBlock.Invoke()
-
-    Remove-PSBreakpoint $breakpoint
-
-    #$fileMap | ConvertTo-Json
-  
-
-    foreach($node in [ScriptProfiler]::Queue.GetEnumerator())
+    else
     {
-        $record = $fileMap[$node.Breakpoint.Script][$node.Breakpoint.Line-1]
-        $record.LineNumber = $node.Breakpoint.Line - 1
-
-        if($lastNode)
-        {
-            $duration = $node.ElapsedMilliseconds - $lastNode.ElapsedMilliseconds
-        }
-        else
-        {
-            $duration = $node.ElapsedMilliseconds
-        }
-        
-        
-        if($lastRecord)
-        {
-            $lastRecord.AddExecutionTime($duration)       
-        }
-
-        $lastRecord = $record
-        $lastNode = $node
-    }
-
-    foreach($script in $fileMap.Keys)
-    {
-        foreach($line in $fileMap[$script])
-        {
-            Write-Output $line
-        }
+        Write-Warning "Parsing files did not result in any breakpoints"
     }
 }
