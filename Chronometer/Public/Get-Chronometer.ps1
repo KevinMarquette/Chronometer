@@ -22,23 +22,29 @@ function Get-Chronometer
     )
 
     $Chronometer = [Chronometer]::New()
-    $breakPoint = $Chronometer.AddBreakpoint($Path)
 
-    [ScriptProfiler]::Start()
-    [void] $ScriptBlock.Invoke()
+    Write-Verbose "Setting breapoints"
+    $Chronometer.AddBreakpoint($Path)
 
-    $Chronometer.ClearBreakpoint()
-
-    foreach($node in [ScriptProfiler]::Queue.GetEnumerator())
+    if($Chronometer.breakPoint -ne $null)
     {
-        $Chronometer.AddExecution($node)
-    }
+        Write-Verbose "Executing Script"
+        [ScriptProfiler]::Start()
+        [void] $ScriptBlock.Invoke()
 
-    foreach($script in $fileMap.Keys)
-    {
-        foreach($line in $fileMap[$script])
+        Write-Verbose "Clearing Breapoints"
+        $Chronometer.ClearBreakpoint()
+
+        Write-Verbose "Processing data"
+        foreach($node in [ScriptProfiler]::Queue.GetEnumerator())
         {
-            Write-Output $line
+            $Chronometer.AddExecution($node)
         }
+
+        Write-Output $Chronometer.GetResults()
+    }
+    else
+    {
+        Write-Warning "Parsing files did not result in any breakpoints"
     }
 }

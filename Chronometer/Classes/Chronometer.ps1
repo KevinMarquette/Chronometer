@@ -35,8 +35,14 @@ class Chronometer
         $script = $Execution.Breakpoint.Script
         if($this.FileMap.ContainsKey($script))
         {
+            # Each script tracks it's own execution times
             $this.FileMap[$script].AddExecution($Execution)
         }
+    }
+
+    [MonitoredScript[]] GetResults()
+    {
+        return $this.FileMap.Values
     }
 }
 
@@ -45,8 +51,8 @@ class MonitoredScript
     [string]$Path
     [System.Collections.ArrayList]$Line
 
-    $lastNode = $null
-    $lastRecord = $null
+    hidden $lastNode = $null
+    hidden $lastRecord = $null
 
     MonitoredScript()
     {
