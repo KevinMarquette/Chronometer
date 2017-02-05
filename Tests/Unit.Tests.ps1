@@ -17,6 +17,17 @@ Describe "Basic unit tests" -Tags Build {
             $results = Get-Chronometer -Path $PSScriptRoot\..\ScratchFiles\example.ps1 -Script {. "$PSScriptRoot\..\ScratchFiles\example.ps1"} 
             $results | Should Not BeNullOrEmpty
         }
+
+         it "Executes a script with linenumbers and gives results" {
+            # Get-Chronometer -Path ScratchFiles\example.ps1 -Script {"Test"} 
+            $params = @{
+                Path = "$PSScriptRoot\..\ScratchFiles\example.ps1"
+                Script = {. "$PSScriptRoot\..\ScratchFiles\example.ps1"}
+                LineNumber = 2,3,5,6
+            }
+            $results = Get-Chronometer @params
+            $results | Should Not BeNullOrEmpty
+        }
     }
 
     Context "Function: Format-Chronometer" {

@@ -15,6 +15,10 @@ function Get-Chronometer
         [string[]]
         $Path,
 
+        # Line numbers within the script file to measure
+        [int[]]
+        $LineNumber = $null,
+
         # The script to start the scrupt or execute other commands
         [alias('Script','CommandScript')]
         [scriptblock]
@@ -24,7 +28,7 @@ function Get-Chronometer
     $Chronometer = [Chronometer]::New()
 
     Write-Verbose "Setting breapoints"
-    $Chronometer.AddBreakpoint($Path)
+    $Chronometer.AddBreakpoint($Path,$LineNumber)
 
     if($Chronometer.breakPoint -ne $null)
     {
