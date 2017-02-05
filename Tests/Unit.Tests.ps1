@@ -42,5 +42,13 @@ Describe "Basic unit tests" -Tags Build {
                 {[ScriptProfiler]::Start()} | Should Not Throw
             }
         }
+
+        Context "Class: MonitoredScript" {
+            {[MonitoredScript]::New()} | Should Not Throw
+        }
+
+        Context "Class: MonitoredScript" {
+            {[MonitoredScript]::SetScript("$projectRoot\scratchfiles\example.ps1")} | Should Not Throw
+        }
     }
 }

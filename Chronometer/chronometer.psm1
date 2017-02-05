@@ -7,6 +7,7 @@ Write-Verbose 'Import Classes in order because of dependencies'
 $classList = @(
     'ScriptLine',
     'ScriptProfiler',
+    'MonitoredScript',
     'Chronometer'
 )
 
