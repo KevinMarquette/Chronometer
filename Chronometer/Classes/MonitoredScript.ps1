@@ -46,4 +46,36 @@ class MonitoredScript
         $this.lastRecord = $record
         $this.lastNode = $node
     }
+
+    [void] PostProcessing()
+    {
+        $this.lastNode = $null
+        $this.ExecutionTime = 0
+        foreach($node in $this.line)
+        {
+            $command = $node.text -replace '\s',''
+            
+            switch -Regex ($command)
+            {
+                '^}$|^}#|^$' {
+                    if($node.HitCount -eq 0)
+                    {
+                        $node.HitCount = $this.lastNode.HitCount
+                    }
+                    $node.Milliseconds = 0
+                    $node.Average = 0
+                    $this.lastNode = $node
+                }
+                '^{$|^{#}' {
+                    $node.Milliseconds = 0
+                    $node.Average = 0
+                    $this.lastNode = $node
+                }
+                default {
+                    $this.lastNode = $node
+                }
+            }
+            $this.ExecutionTime += $node.Milliseconds
+        }
+    }
 }

@@ -42,6 +42,10 @@ class Chronometer
 
     [MonitoredScript[]] GetResults()
     {
+        foreach($node in $this.FileMap.Values)
+        {
+            $node.PostProcessing()
+        }
         return $this.FileMap.Values
     }
 }
