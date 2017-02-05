@@ -19,6 +19,18 @@ Describe "Basic unit tests" -Tags Build {
         }
     }
 
+    Context "Function: Format-Chronometer" {
+
+        it "Does not throw" {
+            {$null | Format-Chronometer } | Should Not Throw
+        }
+
+        it "Can process a result object without throwing" {
+            $results = Get-Chronometer -Path $PSScriptRoot\..\ScratchFiles\example.ps1 -Script {. "$PSScriptRoot\..\ScratchFiles\example.ps1"} 
+            $results | Format-Chronometer *>&1 | Should Not BeNullOrEmpty
+        }
+    }
+
     InModuleScope $moduleName {
         Context "Class: ScriptLine" {
         
@@ -44,11 +56,15 @@ Describe "Basic unit tests" -Tags Build {
         }
 
         Context "Class: MonitoredScript" {
-            {[MonitoredScript]::New()} | Should Not Throw
+            it "Creates an object" {
+                {[MonitoredScript]::New()} | Should Not Throw
+            }
+            
+            it  "SetScript()" {
+                $monitor = [MonitoredScript]::New()
+                {$monitor.SetScript("$projectRoot\scratchfiles\example.ps1")} | Should Not Throw
+            }
         }
 
-        Context "Class: MonitoredScript" {
-            {[MonitoredScript]::SetScript("$projectRoot\scratchfiles\example.ps1")} | Should Not Throw
-        }
     }
 }
