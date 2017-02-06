@@ -82,7 +82,7 @@ Task Build -Depends Test {
     Set-ModuleFunctions -Name $env:BHPSModuleManifest -FunctionsToExport $functions
 
     # Bump the module version
-    $version = Step-Version (Get-Metadata -Path $env:BHPSModuleManifest)
+    $version = [version] (Step-Version (Get-Metadata -Path $env:BHPSModuleManifest))
     $galleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName
     if($version -lt $galleryVersion)
     {
