@@ -56,7 +56,7 @@ Task Test -Depends UnitTests  {
         "JobID: $env:APPVEYOR_JOB_ID"
         (New-Object 'System.Net.WebClient').UploadFile(
             "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
-            (Resolve-Path "$ProjectRoot\$TestFile" )
+            "$ProjectRoot\$TestFile"
         )
     }
 
@@ -82,8 +82,16 @@ Task Build -Depends Test {
     Set-ModuleFunctions -Name $env:BHPSModuleManifest -FunctionsToExport $functions
 
     # Bump the module version
-    $Version = Get-NextPSGalleryVersion -Name $env:BHProjectName
-    Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $Version
+    $version = Step-Version (Get-Metadata -Path $env:BHPSModuleManifest)
+    $galleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName
+    if($version -gt $galleryVersion)
+    {
+        $version = $galleryVersion
+    }
+    $version = [version]::New($version.Major,$version.minor.$version.build,$BHBuildNumber)
+    Write-Host "Using version: $version"
+    
+    Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $version
 }
 
 Task Deploy -Depends Build {
