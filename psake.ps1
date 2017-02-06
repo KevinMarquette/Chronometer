@@ -88,7 +88,7 @@ Task Build -Depends Test {
     {
         $version = $galleryVersion
     }
-    $version = [version]::New($version.Major,$version.minor.$version.build,$BHBuildNumber)
+    $version = [version]::New($version.Major,$version.Minor,$version.Build,$BHBuildNumber)
     Write-Host "Using version: $version"
     
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $version
