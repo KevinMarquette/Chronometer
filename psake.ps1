@@ -84,11 +84,11 @@ Task Build -Depends Test {
     # Bump the module version
     $version = Step-Version (Get-Metadata -Path $env:BHPSModuleManifest)
     $galleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName
-    if($version -gt $galleryVersion)
+    if($version -lt $galleryVersion)
     {
         $version = $galleryVersion
     }
-    $version = [version]::New($version.Major,$version.Minor,$version.Build,$BHBuildNumber)
+    $version = [version]::New($version.Major,$version.Minor,$version.Build,$env:BHBuildNumber)
     Write-Host "Using version: $version"
     
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $version
