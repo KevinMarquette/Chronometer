@@ -36,6 +36,6 @@ class ScriptLine
             $this.LineNumber
             $this.Text
         )
-        return ("[{0,5}ms,{1,4},{2,4}ms] {3,4}:{4}" -f $values)
+        return ("[{0:0000}ms,{1:000},{2:000}ms] {3,4}:{4}" -f $values)
     }
 }
