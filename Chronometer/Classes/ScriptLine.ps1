@@ -33,8 +33,9 @@ class ScriptLine
             $this.Milliseconds
             $this.HitCount
             $this.Average
+            $this.LineNumber
             $this.Text
         )
-        return ("[{0:0000}ms,{1:0000},{2:0000}ms]  {3}" -f $values)
+        return ("[{0,5}ms,{1,4},{2,4}ms] {3,4}:{4}" -f $values)
     }
 }
