@@ -6,7 +6,7 @@ class MonitoredScript
     hidden $lastNode = $null
     hidden $lastRecord = $null
 
-    [timespan]$ExecutionTime = 0
+    [timespan]$ExecutionTime = [timespan]::Zero
     [int]$LinesOfCode = 0
 
     MonitoredScript()
@@ -58,7 +58,7 @@ class MonitoredScript
     [void] PostProcessing()
     {
         $this.lastNode = $null
-        $this.ExecutionTime = 0
+        $this.ExecutionTime = [TimeSpan]::Zero
         foreach($node in $this.line)
         {
             $command = $node.text -replace '\s',''
@@ -70,12 +70,12 @@ class MonitoredScript
                     {
                         $node.HitCount = $this.lastNode.HitCount
                     }
-                    $node.Milliseconds = 0
+                    $node.Duration = [TimeSpan]::Zero
                     $node.Average = 0
                     $this.lastNode = $node
                 }
                 '^{$|^{#}' {
-                    $node.Milliseconds = 0
+                    $node.Duration = [TimeSpan]::Zero
                     $node.Average = 0
                     $this.lastNode = $node
                 }
@@ -83,7 +83,7 @@ class MonitoredScript
                     $this.lastNode = $node
                 }
             }
-            $this.ExecutionTime += $node.Milliseconds
+            $this.ExecutionTime += $node.Duration
         }
     }
 }
