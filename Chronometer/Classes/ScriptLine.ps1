@@ -2,13 +2,14 @@
 class ScriptLine
 {
     [float] $Milliseconds = 0
-    [float]   $HitCount = 0
+    [float] $HitCount = 0
     [float] $Min = [float]::MaxValue
     [float] $Max = [float]::MinValue
     [float] $Average = 0
     [int] $LineNumber
     [string] $Path
     [string] $Text
+
 
     [void]AddExecutionTime([float]$Milliseconds)
     {
