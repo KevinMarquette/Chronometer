@@ -1,37 +1,68 @@
 
 class ScriptLine
 {
-    [float] $Milliseconds = 0
+    [TimeSpan] $Duration = 0
     [float] $HitCount = 0
-    [float] $Min = [float]::MaxValue
-    [float] $Max = [float]::MinValue
+    [TimeSpan] $Min = [TimeSpan]::MaxValue
+    [TimeSpan] $Max = [TimeSpan]::MinValue
     [float] $Average = 0
     [int] $LineNumber
     [string] $Path
     [string] $Text
+    [System.Collections.ArrayList]$Executions
+    hidden [hashtable]$LastNode = @{}
 
-
-    [void]AddExecutionTime([float]$Milliseconds)
+    ScriptLine()
     {
-        $this.Milliseconds += $Milliseconds
+        $this.Executions = New-Object 'System.Collections.ArrayList'
+    }
+
+    ScriptLine($Command, $Path, $LineNumber) 
+    {
+        $this.Executions = New-Object 'System.Collections.ArrayList'
+        $this.Text = $Command
+        $this.Path = $Path
+        $this.LineNumber = $LineNumber
+    }
+
+
+    [void]AddExecutionTime([timespan]$Duration)
+    {
+        $this.LastNode.Duration = $Duration
+        $this.Duration += $Duration
         $this.HitCount += 1
-        $this.Average = $this.Milliseconds / $this.HitCount
+        $this.Average = $this.Duration.Milliseconds / $this.HitCount
         
-        if($Milliseconds -lt $this.Min)
+        if($Duration -lt $this.Min)
         {
-            $this.Min = $Milliseconds
+            $this.Min = $Duration
         }
 
-        if($Milliseconds -gt $this.Max)
+        if($Duration -gt $this.Max)
         {
-            $this.Max = $Milliseconds
+            $this.Max = $Duration
         }
+    }
+
+    [void] AddExecution([hashtable]$node)
+    {
+        $this.Executions.Add($node)
+        $this.LastNode = $node
+    }
+
+    [void] Clear()
+    {
+        $this.Duration = [timespan]::Zero
+        $this.HitCount = 0
+        $this.Average = 0
+        $this.LastNode = $null
+        $this.Executions.Clear()
     }
 
     [string] ToString()
     {
         $values = @(
-            $this.Milliseconds
+            $this.Duration.Milliseconds
             $this.HitCount
             $this.Average
             $this.LineNumber
