@@ -9,18 +9,20 @@ function Format-Chronometer
         $resultes = Get-Chronometer -Path $script.fullname  -ScriptBlock {Invoke-Pester C:\workspace\PSGraph}
         $results | Format-Chronometer -WarnAt 20 -ErrorAt 200
     #>
-    [cmdletbinding()]
+    [cmdletbinding(DefaultParameterSetName='Script')]
     param(
         # This is a MonitoredScript object from Get-Chronometer
         [Parameter(
-            ValueFromPipeline=$true
+            ValueFromPipeline=$true,
+            ParameterSetName='Script'
         )]
         [MonitoredScript[]]
         $InputObject,
 
          # This is a ScriptLine object from a MonitoredScript object
         [Parameter(
-            ValueFromPipeline=$true
+            ValueFromPipeline=$true,
+            ParameterSetName='Line'
         )]
         [ScriptLine[]]
         $Line,
@@ -54,7 +56,7 @@ function Format-Chronometer
 
         foreach($command in $Line)
         {
-            Write-ScriptLine $line -WarningAt $WarningAt -ErrorAt $ErrorAt
+            Write-ScriptLine $command -WarningAt $WarningAt -ErrorAt $ErrorAt
         }
     }
 }
