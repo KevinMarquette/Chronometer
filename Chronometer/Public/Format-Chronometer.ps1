@@ -18,33 +18,43 @@ function Format-Chronometer
         [MonitoredScript[]]
         $InputObject,
 
+         # This is a ScriptLine object from a MonitoredScript object
+        [Parameter(
+            ValueFromPipeline=$true
+        )]
+        [ScriptLine[]]
+        $Line,
+
         # If the average time of a command is more than this, the output is yellow
         [int]
         $WarningAt = 20,
 
         #If the average time of a comamand is more than this, the output is red
         [int]
-        $ErrorAt = 200
+        $ErrorAt = 200,
+
+        # Forces the report to show scripts with no execution time
+        [switch]
+        $ShowAll
     )
 
-    begin {
-        $green = @{ForgroundColor='green'}
-        $grey = @{ForgroundColor='grey'}
-        $yellow = @{ForgroundColor='grey'}
-        $yellow = @{ForgroundColor='grey'}
-        $yellow = @{ForgroundColor='grey'}
-    }
     process
     {
         foreach($script in $InputObject)
         {            
-            Write-Host ''
-            Write-Host "Script: $($script.Path)" -ForegroundColor Green
-            Write-Host "Execution Time: $($script.ExecutionTime)" -ForegroundColor Green
-            foreach($line in $script.line)
-            {                   
-                 Write-ScriptLine $line -WarningAt $WarningAt -ErrorAt $ErrorAt
+            if($script.ExecutionTime -ne [TimeSpan]::Zero -or $ShowAll)
+            {
+                Write-Host ''
+                Write-Host "Script: $($script.Path)" -ForegroundColor Green
+                Write-Host "Execution Time: $($script.ExecutionTime)" -ForegroundColor Green
+
+                $script.line | Format-Chronometer -WarningAt $WarningAt -ErrorAt $ErrorAt
             }
+        }
+
+        foreach($command in $Line)
+        {
+            Write-ScriptLine $line -WarningAt $WarningAt -ErrorAt $ErrorAt
         }
     }
 }
