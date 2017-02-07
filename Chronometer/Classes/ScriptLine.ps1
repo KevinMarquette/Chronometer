@@ -9,10 +9,17 @@ class ScriptLine
     [int] $LineNumber
     [string] $Path
     [string] $Text
+    [System.Collections.ArrayList]$Executions
+    hidden [hashtable]$LastNode = $null
 
+    ScriptLine()
+    {
+        $Executions = New-Object 'System.Collections.ArrayList'
+    }
 
     [void]AddExecutionTime([float]$Milliseconds)
     {
+        $this.LastNode.Milliseconds = $Milliseconds
         $this.Milliseconds += $Milliseconds
         $this.HitCount += 1
         $this.Average = $this.Milliseconds / $this.HitCount
@@ -26,6 +33,21 @@ class ScriptLine
         {
             $this.Max = $Milliseconds
         }
+    }
+
+    [void] AddExecution([hashtable]$node)
+    {
+        $this.Executions.Add($node)
+        $this.LastNode = $node
+    }
+
+    [void] Clear()
+    {
+        $this.Milliseconds = 0
+        $this.HitCount = 0
+        $this.Average = 0
+        $this.LastNode = $null
+        $this.Executions.Clear()
     }
 
     [string] ToString()

@@ -38,6 +38,9 @@ class MonitoredScript
         $lineNumber = $node.Breakpoint.Line - 1
         $record = $this.Line[$lineNumber]
 
+        $record.AddExecution($node)
+
+        # Calclate the delta in time
         if($this.lastNode)
         {
             $duration = $node.ElapsedMilliseconds - $this.lastNode.ElapsedMilliseconds
@@ -47,6 +50,7 @@ class MonitoredScript
             $duration = $node.ElapsedMilliseconds
         }        
         
+        # The delta is how long the last command ran
         if($this.lastRecord)
         {
             $this.lastRecord.AddExecutionTime($duration) 
