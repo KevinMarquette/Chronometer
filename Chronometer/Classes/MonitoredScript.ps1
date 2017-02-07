@@ -11,12 +11,23 @@ class MonitoredScript
 
     MonitoredScript()
     {
-        $this.Line =New-Object 'System.Collections.Generic.List[ScriptLine]'
+        $this.Line = New-Object 'System.Collections.Generic.List[ScriptLine]'
     }
 
     [int] SetScript([string]$Path)
     {
-        Get-Content -Path $Path | %{ $this.Line.Add( [ScriptLine]@{text=$_;path=$path})}
+        $lineNumber = 0
+        foreach($command in (Get-Content -Path $Path))
+        {
+            $this.Line.Add( 
+                [ScriptLine]@{
+                    Text = $command
+                    Path = $path
+                    LineNumber = $lineNumber
+                }
+            )
+            $lineNumber++
+        }
         $this.LinesOfCode = $this.Line.Count
         return $this.LinesOfCode
     }
@@ -26,7 +37,6 @@ class MonitoredScript
         # Line numbers start at 1 but the array starts at 0
         $lineNumber = $node.Breakpoint.Line - 1
         $record = $this.Line[$lineNumber]
-        $record.LineNumber = $lineNumber
 
         if($this.lastNode)
         {
