@@ -1,10 +1,10 @@
 
 class ScriptLine
 {
-    [float] $Milliseconds = 0
+    [TimeSpan] $Duration = 0
     [float] $HitCount = 0
-    [float] $Min = [float]::MaxValue
-    [float] $Max = [float]::MinValue
+    [TimeSpan] $Min = [TimeSpan]::MaxValue
+    [TimeSpan] $Max = [TimeSpan]::MinValue
     [float] $Average = 0
     [int] $LineNumber
     [string] $Path
@@ -26,21 +26,21 @@ class ScriptLine
     }
 
 
-    [void]AddExecutionTime([float]$Milliseconds)
+    [void]AddExecutionTime([timespan]$Duration)
     {
-        $this.LastNode.Milliseconds = $Milliseconds
-        $this.Milliseconds += $Milliseconds
+        $this.LastNode.Duration = $Duration
+        $this.Duration += $Duration
         $this.HitCount += 1
-        $this.Average = $this.Milliseconds / $this.HitCount
+        $this.Average = $this.Duration.Milliseconds / $this.HitCount
         
-        if($Milliseconds -lt $this.Min)
+        if($Duration -lt $this.Min)
         {
-            $this.Min = $Milliseconds
+            $this.Min = $Duration
         }
 
-        if($Milliseconds -gt $this.Max)
+        if($Duration -gt $this.Max)
         {
-            $this.Max = $Milliseconds
+            $this.Max = $Duration
         }
     }
 
@@ -52,7 +52,7 @@ class ScriptLine
 
     [void] Clear()
     {
-        $this.Milliseconds = 0
+        $this.Duration = [timespan]::Zero
         $this.HitCount = 0
         $this.Average = 0
         $this.LastNode = $null
@@ -62,7 +62,7 @@ class ScriptLine
     [string] ToString()
     {
         $values = @(
-            $this.Milliseconds
+            $this.Duration.Milliseconds
             $this.HitCount
             $this.Average
             $this.LineNumber

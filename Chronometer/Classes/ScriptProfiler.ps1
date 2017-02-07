@@ -13,7 +13,7 @@ class ScriptProfiler {
     {
         [ScriptProfiler]::Queue.Enqueue(@{
             Breakpoint = $InputObject
-            ElapsedMilliseconds = [ScriptProfiler]::Timer.ElapsedMilliseconds
+            Elapsed = [ScriptProfiler]::Timer.Elapsed
         })
     }
 }

@@ -6,7 +6,7 @@ class MonitoredScript
     hidden $lastNode = $null
     hidden $lastRecord = $null
 
-    [float]$ExecutionTime = 0
+    [timespan]$ExecutionTime = 0
     [int]$LinesOfCode = 0
 
     MonitoredScript()
@@ -37,11 +37,11 @@ class MonitoredScript
         # Calclate the delta in time
         if($this.lastNode)
         {
-            $duration = $node.ElapsedMilliseconds - $this.lastNode.ElapsedMilliseconds
+            $duration = $node.Elapsed - $this.lastNode.Elapsed
         }
         else
         {
-            $duration = $node.ElapsedMilliseconds
+            $duration = $node.Elapsed
         }        
         
         # The delta is how long the last command ran
