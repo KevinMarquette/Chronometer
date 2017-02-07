@@ -10,12 +10,21 @@ class ScriptLine
     [string] $Path
     [string] $Text
     [System.Collections.ArrayList]$Executions
-    hidden [hashtable]$LastNode = $null
+    hidden [hashtable]$LastNode = @{}
 
     ScriptLine()
     {
-        $Executions = New-Object 'System.Collections.ArrayList'
+        $this.Executions = New-Object 'System.Collections.ArrayList'
     }
+
+    ScriptLine($Command, $Path, $LineNumber) 
+    {
+        $this.Executions = New-Object 'System.Collections.ArrayList'
+        $this.Text = $Command
+        $this.Path = $Path
+        $this.LineNumber = $LineNumber
+    }
+
 
     [void]AddExecutionTime([float]$Milliseconds)
     {

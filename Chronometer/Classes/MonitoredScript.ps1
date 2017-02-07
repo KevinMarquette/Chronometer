@@ -17,22 +17,16 @@ class MonitoredScript
     [int] SetScript([string]$Path)
     {
         $lineNumber = 0
-        foreach($command in (Get-Content -Path $Path))
+        foreach($command in ( Get-Content -Path $Path ))
         {
-            $this.Line.Add( 
-                [ScriptLine]@{
-                    Text = $command
-                    Path = $path
-                    LineNumber = $lineNumber
-                }
-            )
+            $this.Line.Add( [ScriptLine]::New($command, $path, $lineNumber) )            
             $lineNumber++
         }
         $this.LinesOfCode = $this.Line.Count
         return $this.LinesOfCode
     }
 
-    [void] AddExecution([hashtable]$node)
+    [void] AddExecution( [hashtable]$node )
     {
         # Line numbers start at 1 but the array starts at 0
         $lineNumber = $node.Breakpoint.Line - 1
