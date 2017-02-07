@@ -12,6 +12,7 @@ function Get-Chronometer
     [CmdletBinding()]
     param(
         # Script file to measure execution times on
+        [Parameter(Position=0)]
         [string[]]
         $Path,
 
@@ -20,6 +21,7 @@ function Get-Chronometer
         $LineNumber = $null,
 
         # The script to start the scrupt or execute other commands
+        [Parameter(Position=1)]
         [alias('Script','CommandScript')]
         [scriptblock]
         $ScriptBlock
