@@ -65,7 +65,8 @@ class MonitoredScript
             
             switch -Regex ($command)
             {
-                '^}$|^}#|^$' {
+                '^}$|^}#|^$' 
+                {
                     if($node.HitCount -eq 0)
                     {
                         $node.HitCount = $this.lastNode.HitCount
@@ -74,12 +75,14 @@ class MonitoredScript
                     $node.Average = 0
                     $this.lastNode = $node
                 }
-                '^{$|^{#}' {
+                '^{$|^{#}' 
+                {
                     $node.Duration = [TimeSpan]::Zero
                     $node.Average = 0
                     $this.lastNode = $node
                 }
-                default {
+                default 
+                {
                     $this.lastNode = $node
                 }
             }
