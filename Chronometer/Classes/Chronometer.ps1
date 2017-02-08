@@ -9,7 +9,7 @@ class Chronometer
         {
             $script = [MonitoredScript]@{Path=$file.Path}
             $lines = $script.SetScript($file)
-            if($LineNumber -ne $null)
+            if($null -eq $LineNumber)
             {
                 $bpLine = $LineNumber
             }
@@ -31,7 +31,7 @@ class Chronometer
 
     [void]ClearBreakpoint()
     {
-        if($this.Breakpoint -ne $null -and $this.Breakpoint.count -gt 0)
+        if($null -ne $this.Breakpoint -and $this.Breakpoint.count -gt 0)
         {
             Remove-PSBreakpoint -Breakpoint $this.Breakpoint
         }
