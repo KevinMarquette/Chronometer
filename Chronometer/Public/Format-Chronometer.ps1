@@ -1,3 +1,5 @@
+
+
 function Format-Chronometer
 {
     <#
@@ -9,6 +11,7 @@ function Format-Chronometer
         $resultes = Get-Chronometer -Path $script.fullname  -ScriptBlock {Invoke-Pester C:\workspace\PSGraph}
         $results | Format-Chronometer -WarnAt 20 -ErrorAt 200
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost","")]
     [cmdletbinding(DefaultParameterSetName='Script')]
     param(
         # This is a MonitoredScript object from Get-Chronometer

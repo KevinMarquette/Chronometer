@@ -1,6 +1,8 @@
 
 function Write-ScriptLine
 {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost","")]
+    [cmdletbinding()]
     param(
         [scriptline]
         $line,
