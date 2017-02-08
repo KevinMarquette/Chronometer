@@ -5,27 +5,31 @@ class Chronometer
 
     [void]AddBreakpoint([string[]]$Path, [int[]]$LineNumber)
     {
-        foreach($file in (Resolve-Path $Path -ea 0))
+        if(-not [string]::IsNullOrEmpty($Path))
         {
-            $script = [MonitoredScript]@{Path=$file.Path}
-            $lines = $script.SetScript($file)
-            if($null -eq $LineNumber)
+            foreach($file in (Resolve-Path $Path -ea 0))
             {
-                $bpLine = $LineNumber
-            }
-            else 
-            {
-                $bpLine = (1..$lines)
-            }
+                $script = [MonitoredScript]@{Path=$file.Path}
+                $lines = $script.SetScript($file)
+                
+                if($null -ne $LineNumber)
+                {
+                    $bpLine = $LineNumber
+                }
+                else 
+                {
+                    $bpLine = (1..$lines)
+                }
 
-            $this.fileMap[$file.Path] = $script
+                $this.fileMap[$file.Path] = $script
 
-            $breakpointParam = @{
-                Script = $file
-                Line = $bpLine
-                Action = {[ScriptProfiler]::RecordExecution( $_) }
+                $breakpointParam = @{
+                    Script = $file
+                    Line = $bpLine
+                    Action = {[ScriptProfiler]::RecordExecution( $_) }
+                }
+                $this.breakPoint += Set-PSBreakpoint @breakpointParam
             }
-            $this.breakPoint += Set-PSBreakpoint @breakpointParam
         }
     }
 

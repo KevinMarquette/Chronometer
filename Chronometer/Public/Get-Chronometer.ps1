@@ -32,7 +32,7 @@ function Get-Chronometer
     Write-Verbose "Setting breapoints"
     $Chronometer.AddBreakpoint($Path,$LineNumber)
 
-    if($null -ne $Chronometer.breakPoint)
+    if($null -ne $Chronometer.breakPoint -and $null -ne $ScriptBlock)
     {
         Write-Verbose "Executing Script"
         [ScriptProfiler]::Start()
