@@ -8,7 +8,7 @@
 RootModule = 'chronometer.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.5.1'
+ModuleVersion = '0.5.2'
 
 # ID used to uniquely identify this module
 GUID = 'f3719c3c-008a-4b25-b94d-fc9f587f62dd'
