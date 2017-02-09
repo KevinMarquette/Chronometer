@@ -31,7 +31,7 @@ class ScriptLine
         $this.LastNode.Duration = $Duration
         $this.Duration += $Duration
         $this.HitCount += 1
-        $this.Average = $this.Duration.Milliseconds / $this.HitCount
+        $this.Average = $this.Duration.TotalMilliseconds / $this.HitCount
         
         if($Duration -lt $this.Min)
         {
@@ -62,7 +62,7 @@ class ScriptLine
     [string] ToString()
     {
         $values = @(
-            $this.Duration.Milliseconds
+            $this.Duration.TotalMilliseconds
             $this.HitCount
             $this.Average
             $this.LineNumber
