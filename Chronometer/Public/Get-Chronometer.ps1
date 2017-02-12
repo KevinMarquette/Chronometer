@@ -28,7 +28,7 @@ function Get-Chronometer
             
     )
 
-    if($Path -eq $null)
+    if( $null -eq $Path )
     {
         $Path = Get-ChildItem -Recurse -Include *.psm1,*.ps1 -File
     }
