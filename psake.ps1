@@ -52,6 +52,10 @@ Task Test -Depends UnitTests  {
     # In Appveyor?  Upload our tests! #Abstract this into a function?
     If($ENV:BHBuildSystem -eq 'AppVeyor')
     {
+        [xml]$content = Get-Content "$ProjectRoot\$TestFile"
+        $content.'test-results'.'test-suite'.type = "Powershell"
+        $content.Save("$ProjectRoot\$TestFile")
+
         "Uploading $ProjectRoot\$TestFile to AppVeyor"
         "JobID: $env:APPVEYOR_JOB_ID"
         (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path "$ProjectRoot\$TestFile"))
