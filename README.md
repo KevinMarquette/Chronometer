@@ -1,5 +1,5 @@
 # Chronometer
-A module for measuring performance of Powershell scripts, one line at a time
+A module for measuring performance of Powershell scripts, one line at a time.
 
 ## Project status
 Preview release. The core logic is fleshed out but more testing is needed.
