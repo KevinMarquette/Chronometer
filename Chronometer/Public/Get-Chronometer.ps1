@@ -12,8 +12,10 @@ function Get-Chronometer
     [CmdletBinding()]
     param(
         # Script file to measure execution times on
-        [Parameter(Position=0)]
-        [object[]]
+        [Parameter(
+            ValueFromPipeline = $true
+        )]
+        [Object[]]
         $Path,
 
         # Line numbers within the script file to measure
