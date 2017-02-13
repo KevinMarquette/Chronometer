@@ -12,8 +12,10 @@ function Get-Chronometer
     [CmdletBinding()]
     param(
         # Script file to measure execution times on
-        [Parameter(Position=0)]
-        [string[]]
+        [Parameter(
+            ValueFromPipeline = $true
+        )]
+        [Object[]]
         $Path,
 
         # Line numbers within the script file to measure
@@ -21,11 +23,22 @@ function Get-Chronometer
         $LineNumber = $null,
 
         # The script to start the scrupt or execute other commands
-        [Parameter(Position=1)]
+        [Parameter(Position=0)]
         [alias('Script','CommandScript')]
         [scriptblock]
-        $ScriptBlock
+        $ScriptBlock 
+            
     )
+
+    if( $null -eq $Path )
+    {
+        $Path = Get-ChildItem -Recurse -Include *.psm1,*.ps1 -File
+    }
+
+    if($Path.FullName)
+    {
+        $Path = $Path.FullName
+    }
 
     $Chronometer = [Chronometer]::New()
 
@@ -36,7 +49,7 @@ function Get-Chronometer
     {
         Write-Verbose "Executing Script"
         [ScriptProfiler]::Start()
-        [void] $ScriptBlock.Invoke()
+        [void] $ScriptBlock.Invoke($Path)
 
         Write-Verbose "Clearing Breapoints"
         $Chronometer.ClearBreakpoint()
