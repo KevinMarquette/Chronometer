@@ -5,14 +5,14 @@ class Chronometer
 
     [void]AddBreakpoint([string[]]$Path, [int[]]$LineNumber)
     {
-        if(-not [string]::IsNullOrEmpty($Path))
+        if (-not [string]::IsNullOrEmpty($Path))
         {
-            foreach($file in (Resolve-Path $Path -ea 0))
+            foreach ($file in (Resolve-Path $Path -ea 0))
             {
-                $script = [MonitoredScript]@{Path=$file.Path}
+                $script = [MonitoredScript]@{Path = $file.Path}
                 $lines = $script.SetScript($file)
                 
-                if($null -ne $LineNumber)
+                if ( $null -ne $LineNumber )
                 {
                     $bpLine = $LineNumber
                 }
@@ -26,7 +26,7 @@ class Chronometer
                 $breakpointParam = @{
                     Script = $file
                     Line = $bpLine
-                    Action = {[ScriptProfiler]::RecordExecution( $_) }
+                    Action = { [ScriptProfiler]::RecordExecution( $_) }
                 }
                 $this.breakPoint += Set-PSBreakpoint @breakpointParam
             }
@@ -35,7 +35,7 @@ class Chronometer
 
     [void]ClearBreakpoint()
     {
-        if($null -ne $this.Breakpoint -and $this.Breakpoint.count -gt 0)
+        if ( $null -ne $this.Breakpoint -and $this.Breakpoint.count -gt 0 )
         {
             Remove-PSBreakpoint -Breakpoint $this.Breakpoint
         }
@@ -45,7 +45,7 @@ class Chronometer
     [void] AddExecution([hashtable]$Execution)
     {
         $script = $Execution.Breakpoint.Script
-        if($this.FileMap.ContainsKey($script))
+        if ( $this.FileMap.ContainsKey($script) )
         {
             # Each script tracks it's own execution times
             $this.FileMap[$script].AddExecution($Execution)
@@ -54,7 +54,7 @@ class Chronometer
 
     [MonitoredScript[]] GetResults()
     {
-        foreach($node in $this.FileMap.Values)
+        foreach ( $node in $this.FileMap.Values )
         {
             $node.PostProcessing()
         }

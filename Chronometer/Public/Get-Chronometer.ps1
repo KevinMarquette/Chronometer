@@ -23,47 +23,56 @@ function Get-Chronometer
         $LineNumber = $null,
 
         # The script to start the scrupt or execute other commands
-        [Parameter(Position=0)]
-        [alias('Script','CommandScript')]
+        [Parameter(Position = 0)]
+        [alias('Script', 'CommandScript')]
         [scriptblock]
-        $ScriptBlock 
-            
+        $ScriptBlock             
     )
 
-    if( $null -eq $Path )
+    process 
     {
-        $Path = Get-ChildItem -Recurse -Include *.psm1,*.ps1 -File
-    }
-
-    if($Path.FullName)
-    {
-        $Path = $Path.FullName
-    }
-
-    $Chronometer = [Chronometer]::New()
-
-    Write-Verbose "Setting breapoints"
-    $Chronometer.AddBreakpoint($Path,$LineNumber)
-
-    if($null -ne $Chronometer.breakPoint -and $null -ne $ScriptBlock)
-    {
-        Write-Verbose "Executing Script"
-        [ScriptProfiler]::Start()
-        [void] $ScriptBlock.Invoke($Path)
-
-        Write-Verbose "Clearing Breapoints"
-        $Chronometer.ClearBreakpoint()
-
-        Write-Verbose "Processing data"
-        foreach($node in [ScriptProfiler]::Queue.GetEnumerator())
+        try
         {
-            $Chronometer.AddExecution($node)
-        }
+            if ( $null -eq $Path )
+            {
+                $Path = Get-ChildItem -Recurse -Include *.psm1, *.ps1 -File
+            }
 
-        Write-Output $Chronometer.GetResults()
-    }
-    else
-    {
-        Write-Warning "Parsing files did not result in any breakpoints"
+            if ( $Path.FullName )
+            {
+                $Path = $Path.FullName
+            }
+
+            $Chronometer = [Chronometer]::New()
+
+            Write-Verbose "Setting breapoints"
+            $Chronometer.AddBreakpoint($Path, $LineNumber)
+
+            if ( $null -ne $Chronometer.breakPoint -and $null -ne $ScriptBlock )
+            {
+                Write-Verbose "Executing Script"
+                [ScriptProfiler]::Start()
+                [void] $ScriptBlock.Invoke($Path)
+
+                Write-Verbose "Clearing Breapoints"
+                $Chronometer.ClearBreakpoint()
+
+                Write-Verbose "Processing data"
+                foreach ( $node in [ScriptProfiler]::Queue.GetEnumerator() )
+                {
+                    $Chronometer.AddExecution($node)
+                }
+
+                Write-Output $Chronometer.GetResults()
+            }
+            else
+            {
+                Write-Warning "Parsing files did not result in any breakpoints"
+            }
+        }
+        catch
+        {
+            $PSCmdlet.ThrowTerminatingError($PSItem)
+        }
     }
 }

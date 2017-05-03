@@ -2,11 +2,11 @@
 # Init some things
 Properties {
     # Find the build folder based on build system
-        $ProjectRoot = $ENV:BHProjectPath
-        if(-not $ProjectRoot)
-        {
-            $ProjectRoot = $PSScriptRoot
-        }
+    $ProjectRoot = $ENV:BHProjectPath
+    if (-not $ProjectRoot)
+    {
+        $ProjectRoot = $PSScriptRoot
+    }
 
     $Timestamp = Get-date -uformat "%Y%m%d-%H%M%S"
     $PSVersion = $PSVersionTable.PSVersion.Major
@@ -14,7 +14,7 @@ Properties {
     $lines = '----------------------------------------------------------------------'
 
     $Verbose = @{}
-    if($ENV:BHCommitMessage -match "!verbose")
+    if ( $ENV:BHCommitMessage -match "!verbose" )
     {
         $Verbose = @{Verbose = $True}
     }
@@ -35,14 +35,14 @@ Task UnitTests -Depends Init {
     'Running quick unit tests to fail early if there is an error'
     $TestResults = Invoke-Pester -Path $ProjectRoot\Tests\*unit* -PassThru -Tag Build 
     
-    if($TestResults.FailedCount -gt 0)
+    if ( $TestResults.FailedCount -gt 0 )
     {
         Write-Error "Failed '$($TestResults.FailedCount)' tests, build failed"
     }
     "`n"
 }
 
-Task Test -Depends UnitTests  {
+Task Test -Depends UnitTests {
     $lines
     "`n`tSTATUS: Testing with PowerShell $PSVersion"
 
@@ -50,11 +50,11 @@ Task Test -Depends UnitTests  {
     $TestResults = Invoke-Pester -Path $ProjectRoot\Tests -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile" -Tag Build
 
     # In Appveyor?  Upload our tests! #Abstract this into a function?
-    If($ENV:BHBuildSystem -eq 'AppVeyor')
+    If ( $ENV:BHBuildSystem -eq 'AppVeyor' )
     {
         [xml]$content = Get-Content "$ProjectRoot\$TestFile"
         $content.'test-results'.'test-suite'.type = "Powershell"
-        $content.Save("$ProjectRoot\$TestFile")
+        $content.Save( "$ProjectRoot\$TestFile" )
 
         "Uploading $ProjectRoot\$TestFile to AppVeyor"
         "JobID: $env:APPVEYOR_JOB_ID"
@@ -65,7 +65,7 @@ Task Test -Depends UnitTests  {
 
     # Failed tests?
     # Need to tell psake or it will proceed to the deployment. Danger!
-    if($TestResults.FailedCount -gt 0)
+    if ( $TestResults.FailedCount -gt 0 )
     {
         Write-Error "Failed '$($TestResults.FailedCount)' tests, build failed"
     }
@@ -76,8 +76,8 @@ Task Build -Depends Test {
     $lines
 
     $functions = Get-ChildItem "$PSScriptRoot\$env:BHProjectName\Public\*.ps1" | 
-            Where-Object{ $_.name -notmatch 'Tests'} |
-            Select-Object -ExpandProperty basename      
+        Where-Object { $_.name -notmatch 'Tests'} |
+        Select-Object -ExpandProperty basename      
 
     # Load the module, read the exported functions, update the psd1 FunctionsToExport
     Set-ModuleFunctions -Name $env:BHPSModuleManifest -FunctionsToExport $functions
@@ -85,23 +85,47 @@ Task Build -Depends Test {
     # Bump the module version
     $version = [version] (Step-Version (Get-Metadata -Path $env:BHPSModuleManifest))
     $galleryVersion = Get-NextPSGalleryVersion -Name $env:BHProjectName
-    if($version -lt $galleryVersion)
+    if ( $version -lt $galleryVersion )
     {
         $version = $galleryVersion
     }
-    $version = [version]::New($version.Major,$version.Minor,$version.Build,$env:BHBuildNumber)
+    $version = [version]::New($version.Major, $version.Minor, $version.Build, $env:BHBuildNumber)
     Write-Host "Using version: $version"
     
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $version
+
+    $psm1 = "$PSScriptRoot\$env:BHProjectName\$env:BHProjectName.psm1"
+
+    # keep the first line in the psm1 file and clear the rest
+    ( Get-Content -Path $psm1 -TotalCount 1 ) | Set-Content -Path $psm1 
+    foreach ( $folder in ('Classes', 'Public', 'Private') )
+    {
+        Add-Content -Path $psm1 -Value "Write-Verbose 'Importing from [$folder]'"
+        $imports = Get-ChildItem "$PSScriptRoot\$env:BHProjectName\$folder\*.ps1" -Exclude *.Tests.ps1
+        foreach ( $file in $imports )
+        {
+            Add-Content -Path $psm1 -Value ''
+            Add-Content -Path $psm1 -Value "Write-Verbose '  Source [\$folder\$($file.name)]'"
+            [System.IO.File]::ReadAllText($file.fullname) | Add-Content -Path $psm1
+        }
+
+        # Remove folders after import
+        Remove-Item "$PSScriptRoot\$env:BHProjectName\$folder" -Recurse
+    }
+
+    # Add exports
+    Add-Content -Path $psm1 -Value "Export-ModuleMember -Function $($functions -join ', ')"
+    
+    Import-Module $psm1 -Force
 }
 
 Task Deploy -Depends Build {
     $lines
 
     # Gate deployment
-    if(
-        $ENV:BHBuildSystem -ne 'Unknown' -and
-        $ENV:BHBranchName -eq "master" -and
+    if (
+        $ENV:BHBuildSystem -ne 'Unknown' -and 
+        $ENV:BHBranchName -eq "master" -and 
         $ENV:BHCommitMessage -match '!deploy'
     )
     {
@@ -114,9 +138,9 @@ Task Deploy -Depends Build {
     }
     else
     {
-        "Skipping deployment: To deploy, ensure that...`n" +
-        "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
-        "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
+        "Skipping deployment: To deploy, ensure that...`n" + 
+        "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" + 
+        "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" + 
         "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
     }
 }

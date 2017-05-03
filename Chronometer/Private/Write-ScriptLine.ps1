@@ -1,7 +1,6 @@
-
 function Write-ScriptLine
 {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost","")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
     [cmdletbinding()]
     param(
         [scriptline]
@@ -10,18 +9,18 @@ function Write-ScriptLine
         $ErrorAt = [int]::MaxValue
     )
 
-    if($line)
+    if ( $line )
     {         
         $Color = 'Green'
-        if($line.HitCount -eq 0)
+        if ( $line.HitCount -eq 0 )
         {
             $Color = 'Gray'
         }
-        elseif($line.Average -ge $ErrorAt)
+        elseif ( $line.Average -ge $ErrorAt )
         {
             $Color = 'Red'
         }
-        elseif($line.Average -ge $WarningAt)
+        elseif ( $line.Average -ge $WarningAt )
         {
             $Color = 'Yellow'
         }

@@ -17,7 +17,7 @@ class MonitoredScript
     [int] SetScript([string]$Path)
     {
         $lineNumber = 0
-        foreach($command in ( Get-Content -Path $Path ))
+        foreach ( $command in ( Get-Content -Path $Path ) )
         {
             $this.Line.Add( [ScriptLine]::New($command, $path, $lineNumber) )            
             $lineNumber++
@@ -35,7 +35,7 @@ class MonitoredScript
         $record.AddExecution($node)
 
         # Calclate the delta in time
-        if($this.lastNode)
+        if ( $this.lastNode )
         {
             $duration = $node.Elapsed - $this.lastNode.Elapsed
         }
@@ -45,7 +45,7 @@ class MonitoredScript
         }        
         
         # The delta is how long the last command ran
-        if($this.lastRecord)
+        if ( $this.lastRecord )
         {
             $this.lastRecord.AddExecutionTime($duration) 
             $this.ExecutionTime += $duration      
@@ -59,15 +59,15 @@ class MonitoredScript
     {
         $this.lastNode = $null
         $this.ExecutionTime = [TimeSpan]::Zero
-        foreach($node in $this.line)
+        foreach ( $node in $this.line )
         {
-            $command = $node.text -replace '\s',''
+            $command = $node.text -replace '\s', ''
             
-            switch -Regex ($command)
+            switch -Regex ( $command )
             {
                 '^}$|^}#|^$' 
                 {
-                    if($node.HitCount -eq 0)
+                    if ( $node.HitCount -eq 0 )
                     {
                         $node.HitCount = $this.lastNode.HitCount
                     }

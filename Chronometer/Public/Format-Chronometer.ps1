@@ -1,5 +1,3 @@
-
-
 function Format-Chronometer
 {
     <#
@@ -11,21 +9,21 @@ function Format-Chronometer
         $resultes = Get-Chronometer -Path $script.fullname  -ScriptBlock {Invoke-Pester C:\workspace\PSGraph}
         $results | Format-Chronometer -WarnAt 20 -ErrorAt 200
     #>
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost","")]
-    [cmdletbinding(DefaultParameterSetName='Script')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
+    [cmdletbinding(DefaultParameterSetName = 'Script')]
     param(
         # This is a MonitoredScript object from Get-Chronometer
         [Parameter(
-            ValueFromPipeline=$true,
-            ParameterSetName='Script'
+            ValueFromPipeline = $true,
+            ParameterSetName = 'Script'
         )]
         [MonitoredScript[]]
         $InputObject,
 
-         # This is a ScriptLine object from a MonitoredScript object
+        # This is a ScriptLine object from a MonitoredScript object
         [Parameter(
-            ValueFromPipeline=$true,
-            ParameterSetName='Line'
+            ValueFromPipeline = $true,
+            ParameterSetName = 'Line'
         )]
         [ScriptLine[]]
         $Line,
@@ -45,21 +43,28 @@ function Format-Chronometer
 
     process
     {
-        foreach($script in $InputObject)
-        {            
-            if($script.ExecutionTime -ne [TimeSpan]::Zero -or $ShowAll)
-            {
-                Write-Host ''
-                Write-Host "Script: $($script.Path)" -ForegroundColor Green
-                Write-Host "Execution Time: $($script.ExecutionTime)" -ForegroundColor Green
-
-                $script.line | Format-Chronometer -WarningAt $WarningAt -ErrorAt $ErrorAt
-            }
-        }
-
-        foreach($command in $Line)
+        try
         {
-            Write-ScriptLine $command -WarningAt $WarningAt -ErrorAt $ErrorAt
+            foreach ( $script in $InputObject )
+            {            
+                if ( $script.ExecutionTime -ne [TimeSpan]::Zero -or $ShowAll )
+                {
+                    Write-Host ''
+                    Write-Host "Script: $($script.Path)" -ForegroundColor Green
+                    Write-Host "Execution Time: $($script.ExecutionTime)" -ForegroundColor Green
+
+                    $script.line | Format-Chronometer -WarningAt $WarningAt -ErrorAt $ErrorAt
+                }
+            }
+
+            foreach ( $command in $Line )
+            {
+                Write-ScriptLine $command -WarningAt $WarningAt -ErrorAt $ErrorAt
+            }            
+        }
+        catch
+        {
+            $PSCmdlet.ThrowTerminatingError($PSItem)
         }
     }
 }

@@ -33,12 +33,12 @@ class ScriptLine
         $this.HitCount += 1
         $this.Average = $this.Duration.TotalMilliseconds / $this.HitCount
         
-        if($Duration -lt $this.Min)
+        if ( $Duration -lt $this.Min )
         {
             $this.Min = $Duration
         }
 
-        if($Duration -gt $this.Max)
+        if ( $Duration -gt $this.Max )
         {
             $this.Max = $Duration
         }
