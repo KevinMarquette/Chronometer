@@ -95,7 +95,6 @@ Task Build -Depends Test {
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $version
 
     $psm1 = "$PSScriptRoot\$env:BHProjectName\$env:BHProjectName.psm1"
-    Remove-Item $psm1
 
     # keep the first line in the psm1 file and clear the rest
     Get-Content -Path $psm1 -TotalCount 1 | Set-Content -Path $psm1 
