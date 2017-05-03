@@ -97,7 +97,7 @@ Task Build -Depends Test {
     $psm1 = "$PSScriptRoot\$env:BHProjectName\$env:BHProjectName.psm1"
 
     # keep the first line in the psm1 file and clear the rest
-    Get-Content -Path $psm1 -TotalCount 1 | Set-Content -Path $psm1 
+    Get-Content -Path $psm1 -TotalCount 1 -Raw | Set-Content -Path $psm1 
     foreach ( $folder in ('Classes', 'Public', 'Private') )
     {
         Add-Content -Path $psm1 -Value "Write-Verbose 'Importing from [$folder]'"
