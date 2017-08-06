@@ -25,7 +25,7 @@ class Chronometer
 
                 $breakpointParam = @{
                     Script = $file
-                    Line = $bpLine
+                    Line   = $bpLine
                     Action = { [ScriptProfiler]::RecordExecution( $_) }
                 }
                 $this.breakPoint += Set-PSBreakpoint @breakpointParam
