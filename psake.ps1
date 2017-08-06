@@ -130,7 +130,7 @@ Task Deploy -Depends Build {
     )
     {
         $Params = @{
-            Path = $ProjectRoot
+            Path  = $ProjectRoot
             Force = $true
         }
 
