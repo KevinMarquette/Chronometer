@@ -10,7 +10,7 @@ Describe "Function: Get-Chronometer" -Tag Build {
         $results | Should Not BeNullOrEmpty
     }
 
-    It "Executes a script with linenumbers and gives results" {
+    It "Executes a script with line numbers and gives results" {
         # Get-Chronometer -Path ScratchFiles\example.ps1 -Script {"Test"}
         $params = @{
             Path = "$PSScriptRoot\..\ScratchFiles\example.ps1"
