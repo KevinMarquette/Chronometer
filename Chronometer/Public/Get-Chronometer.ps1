@@ -45,7 +45,7 @@ function Get-Chronometer
 
             $Chronometer = [Chronometer]::New()
 
-            Write-Verbose "Setting breapoints"
+            Write-Verbose "Setting breakpoints"
             $Chronometer.AddBreakpoint($Path, $LineNumber)
 
             if ( $null -ne $Chronometer.breakPoint -and $null -ne $ScriptBlock )
