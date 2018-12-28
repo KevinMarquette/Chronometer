@@ -1,21 +1,38 @@
-<#
-.Description
-Installs and loads all the required modules for the build.
-.Author
-Warren F. (RamblingCookieMonster)
-#>
+[CmdletBinding()]
 
-[cmdletbinding()]
-param ($Task = 'Default')
+param($Task = 'Default')
 
-# Grab nuget bits, install modules, set build variables, start build.
-Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
+$Script:Modules = @(
+    'BuildHelpers',
+    'InvokeBuild',
+    'Pester',
+    'platyPS',
+    'PSScriptAnalyzer',
+    'DependsOn'
+)
 
-Install-Module Psake, PSDeploy, BuildHelpers, PSScriptAnalyzer -force
-Install-Module Pester -Force -SkipPublisherCheck 
-Import-Module Psake, BuildHelpers, PSScriptAnalyzer
+$Script:ModuleInstallScope = 'CurrentUser'
+
+'Starting build...'
+'Installing module dependencies...'
+
+Get-PackageProvider -Name 'NuGet' -ForceBootstrap | Out-Null
+
+Install-Module -Name $Script:Modules -Scope $Script:ModuleInstallScope -Force -SkipPublisherCheck
 
 Set-BuildEnvironment
+Get-ChildItem Env:BH*
+Get-ChildItem Env:APPVEYOR*
 
-Invoke-psake -buildFile .\psake.ps1 -taskList $Task -nologo
-exit ( [int]( -not $psake.build_success ) )
+$Error.Clear()
+
+'Invoking build...'
+
+Invoke-Build $Task -Result 'Result'
+if ($Result.Error)
+{
+    $Error[-1].ScriptStackTrace | Out-String
+    exit 1
+}
+
+exit 0
