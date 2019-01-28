@@ -27,9 +27,11 @@ function Format-ChronometerToGridView
         [ScriptLine[]]
         $Line,
 
+        # Default width for the code statements, can be overridden
         [int]
         $StatementWidth = 132,
 
+        # Optional title to be used in grid view. If none is specified the file name is used
         [string]
         $Title,
 
