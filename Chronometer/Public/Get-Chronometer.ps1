@@ -54,6 +54,9 @@ function Get-Chronometer
                 [ScriptProfiler]::Start()
                 [void] $ScriptBlock.Invoke($Path)
 
+                # Add a dummy stub to process last line
+                [ScriptProfiler]::RecordExecution([ScriptProfiler]::LastNode)
+
                 Write-Verbose "Clearing Breapoints"
                 $Chronometer.ClearBreakpoint()
 
