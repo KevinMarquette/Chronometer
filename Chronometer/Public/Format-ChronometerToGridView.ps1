@@ -1,5 +1,14 @@
 function Format-ChronometerToGridView
 {
+    <#
+        .Description
+        Generates a report from a Chronometer sending the output to one or more grid views
+
+        .Example                
+        $script = ls C:\workspace\PSGraph\PSGraph -Recurse -Filter *.ps1
+        $resultes = Get-Chronometer -Path $script.fullname  -ScriptBlock {Invoke-Pester C:\workspace\PSGraph}
+        $results | Format-ChronometerToGridView
+    #>
     [cmdletbinding(DefaultParameterSetName = 'Script')]
     param(
         # This is a MonitoredScript object from Get-Chronometer
