@@ -64,7 +64,7 @@ function Format-ChronometerToGridView
                             $strTitle = $Title
                         }  
 
-                        $script.line | Format-ChronometerToGridView -WarningAt $WarningAt -ErrorAt $ErrorAt -Title $strTitle -StatementWidth $StatementWidthl
+                        $script.line | Format-ChronometerToGridView -Title $strTitle -StatementWidth $StatementWidthl
                     }
                 }
             }
