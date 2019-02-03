@@ -3,6 +3,8 @@ class ScriptProfiler {
     static [System.Collections.Queue] $Queue
     static [System.Diagnostics.Stopwatch] $Timer
 
+    static $LastNode = $null
+
     static [void] Start()
     {
         [ScriptProfiler]::Queue = New-Object System.Collections.Queue
@@ -15,5 +17,7 @@ class ScriptProfiler {
             Breakpoint = $InputObject
             Elapsed = [ScriptProfiler]::Timer.Elapsed
         })
+
+        [ScriptProfiler]::LastNode = $InputObject
     }
 }
