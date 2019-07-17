@@ -54,7 +54,7 @@ function Get-Chronometer
                 [ScriptProfiler]::Start()
                 [void] $ScriptBlock.Invoke($Path)
 
-                Write-Verbose "Clearing Breapoints"
+                Write-Verbose "Clearing Breakpoints"
                 $Chronometer.ClearBreakpoint()
 
                 Write-Verbose "Processing data"
