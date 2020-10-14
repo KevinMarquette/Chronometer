@@ -75,6 +75,13 @@ $('table.chronometer').DataTable({
         null,
         null
     ],
+    "columns": [
+        { "width": "60px" },
+        { "width": "60px" },
+        { "width": "60px" },
+        { "width": "60px" },
+        null
+    ],
     "language": {
         "search": "_INPUT_",            // Removes the 'Search' field label
         "searchPlaceholder": "Search"   // Placeholder for the search box
