@@ -37,3 +37,5 @@ Here is a more complex example:
 # More Resources
 ## Blog Posts
 * [Powershell: Chronometer, line by line script execution times](https://powershellexplained.com/2017-02-05-Powershell-Chronometer-line-by-line-script-execution-times)
+## Alternate Solutions
+* [PSProfiler](https://github.com/IISResetMe/PSProfiler)
