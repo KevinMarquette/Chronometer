@@ -19,8 +19,8 @@ class MonitoredScript
         $lineNumber = 0
         foreach ( $command in ( Get-Content -Path $Path ) )
         {
-            $this.Line.Add( [ScriptLine]::New($command, $path, $lineNumber) )            
             $lineNumber++
+            $this.Line.Add( [ScriptLine]::New($command, $path, $lineNumber) )
         }
         $this.LinesOfCode = $this.Line.Count
         return $this.LinesOfCode
@@ -42,13 +42,13 @@ class MonitoredScript
         else
         {
             $duration = $node.Elapsed
-        }        
-        
+        }
+
         # The delta is how long the last command ran
         if ( $this.lastRecord )
         {
-            $this.lastRecord.AddExecutionTime($duration) 
-            $this.ExecutionTime += $duration      
+            $this.lastRecord.AddExecutionTime($duration)
+            $this.ExecutionTime += $duration
         }
 
         $this.lastRecord = $record
@@ -62,10 +62,10 @@ class MonitoredScript
         foreach ( $node in $this.line )
         {
             $command = $node.text -replace '\s', ''
-            
+
             switch -Regex ( $command )
             {
-                '^}$|^}#|^$' 
+                '^}$|^}#|^$'
                 {
                     if ( $node.HitCount -eq 0 )
                     {
@@ -75,13 +75,13 @@ class MonitoredScript
                     $node.Average = 0
                     $this.lastNode = $node
                 }
-                '^{$|^{#}' 
+                '^{$|^{#}'
                 {
                     $node.Duration = [TimeSpan]::Zero
                     $node.Average = 0
                     $this.lastNode = $node
                 }
-                default 
+                default
                 {
                     $this.lastNode = $node
                 }

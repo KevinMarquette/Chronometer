@@ -26,10 +26,10 @@ function Get-Chronometer
         [Parameter(Position = 0)]
         [alias('Script', 'CommandScript')]
         [scriptblock]
-        $ScriptBlock             
+        $ScriptBlock
     )
 
-    process 
+    process
     {
         try
         {
@@ -53,6 +53,9 @@ function Get-Chronometer
                 Write-Verbose "Executing Script"
                 [ScriptProfiler]::Start()
                 [void] $ScriptBlock.Invoke($Path)
+
+                # Add a dummy stub to process last line
+                [ScriptProfiler]::RecordExecution([ScriptProfiler]::LastNode)
 
                 Write-Verbose "Clearing Breakpoints"
                 $Chronometer.ClearBreakpoint()
