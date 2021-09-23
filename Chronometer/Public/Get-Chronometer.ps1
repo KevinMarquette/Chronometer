@@ -48,6 +48,14 @@ function Get-Chronometer
             Write-Verbose "Setting breakpoints"
             $Chronometer.AddBreakpoint($Path, $LineNumber)
 
+            if ($null -eq $ScriptBlock) {
+                # check whether $Path was a single (.ps1) file
+                $Item=Get-Childitem -LiteralPath $Path -File -ErrorAction SilentlyContinue
+                if ($Item.Count -eq 1 -and $Item.Extension -in '.ps1') {
+                    $ScriptBlock=[ScriptBlock]::Create("& $($Item.FullName)")
+                }
+            }
+
             if ( $null -ne $Chronometer.breakPoint -and $null -ne $ScriptBlock )
             {
                 Write-Verbose "Executing Script"
